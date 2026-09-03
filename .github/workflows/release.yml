@@ -99,8 +99,8 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          shopt -s nullglob
-          files=(dist/**/*.dmg dist/**/*.exe dist/**/*.deb dist/*.dmg dist/*.exe dist/*.deb)
+          # 各平台 artifact 目录深度不一,用 find 递归收集,避免 glob 深度不够漏包
+          mapfile -t files < <(find dist -type f \( -name "*.dmg" -o -name "*.exe" -o -name "*.deb" \))
           [ ${#files[@]} -gt 0 ] || { echo "没有安装包可上传"; find dist -type f; exit 1; }
           gh release create "$GITHUB_REF_NAME" --title "tongbu $GITHUB_REF_NAME" --generate-notes "${files[@]}" \
             || gh release upload "$GITHUB_REF_NAME" "${files[@]}" --clobber
