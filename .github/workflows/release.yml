@@ -98,7 +98,7 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           shopt -s nullglob
-          files=(dist/*.dmg dist/*.exe dist/*.deb)
-          [ ${#files[@]} -gt 0 ] || { echo "没有安装包可上传"; exit 1; }
+          files=(dist/**/*.dmg dist/**/*.exe dist/**/*.deb dist/*.dmg dist/*.exe dist/*.deb)
+          [ ${#files[@]} -gt 0 ] || { echo "没有安装包可上传"; find dist -type f; exit 1; }
           gh release create "$GITHUB_REF_NAME" --title "tongbu $GITHUB_REF_NAME" --generate-notes "${files[@]}" \
             || gh release upload "$GITHUB_REF_NAME" "${files[@]}" --clobber
