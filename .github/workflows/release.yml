@@ -67,6 +67,7 @@ jobs:
         uses: tauri-apps/tauri-action@v0
         with:
           projectPath: desktop
+          tagName: ${{ github.ref_name }}
           args: --bundles ${{ matrix.bundles }} ${{ matrix.rust-target && format('--target {0}', matrix.rust-target) || '' }}
 
       - name: 上传安装包
