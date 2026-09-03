@@ -1,0 +1,18 @@
+{
+  "name": "tongbu",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "跨 CLI agent 会话接力工具（桌面 GUI）",
+  "scripts": {
+    "tongbu": "tsx src/cli.ts",
+    "desktop:dev": "npm --prefix desktop run tauri -- dev",
+    "typecheck": "tsc --noEmit",
+    "test": "tsx --test tests/*.test.ts"
+  },
+  "devDependencies": {
+    "tsx": "^4.19.0",
+    "typescript": "^5.6.0",
+    "@types/node": "^22.0.0"
+  }
+}

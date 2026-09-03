@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <defs>
+    <radialGradient id="bg" cx="0.5" cy="0.38" r="0.95">
+      <stop offset="0" stop-color="#24262B"/>
+      <stop offset="0.55" stop-color="#101114"/>
+      <stop offset="1" stop-color="#050506"/>
+    </radialGradient>
+    <linearGradient id="ln" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#FFFFFF"/>
+      <stop offset="0.55" stop-color="#C7CCD6"/>
+      <stop offset="1" stop-color="#8A93A3"/>
+    </linearGradient>
+  </defs>
+
+  <!-- 黑曜石底座，顶部略亮营造金属受光 -->
+  <rect width="1024" height="1024" rx="212" fill="url(#bg)"/>
+
+  <!-- 纤细的同步双弧箭头：跨 agent 会话接力 -->
+  <g transform="translate(152,152) scale(30)"
+     fill="none" stroke="url(#ln)" stroke-width="1.5"
+     stroke-linecap="round" stroke-linejoin="round">
+    <path d="M23 4 L23 10 L17 10"/>
+    <path d="M3.51 9 A9 9 0 0 1 18.36 5.64 L23 10"/>
+    <path d="M1 20 L1 14 L7 14"/>
+    <path d="M1 14 L5.64 18.36 A9 9 0 0 0 20.49 15"/>
+  </g>
+</svg>

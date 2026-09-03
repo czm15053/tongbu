@@ -1,0 +1,6 @@
+node_modules/
+.DS_Store
+.mai/
+desktop/src-tauri/target/
+desktop/dist/
+.claude/

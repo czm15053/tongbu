@@ -1,0 +1,42 @@
+name: build-windows
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  windows:
+    runs-on: windows-latest
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - uses: dtolnay/rust-toolchain@stable
+
+      # 仓库根依赖（app 运行期 resolve_cwd 要走 src/cli.ts + node_modules/tsx）
+      - name: 根依赖
+        run: npm ci
+
+      - name: 桌面前端构建
+        working-directory: desktop
+        run: |
+          npm ci
+          npm run build
+
+      - name: Windows 打包（NSIS）
+        uses: tauri-apps/tauri-action@v0
+        with:
+          projectPath: desktop
+          args: --bundles nsis
+
+      - name: 上传安装包
+        uses: actions/upload-artifact@v4
+        with:
+          name: tongbu-windows-nsis
+          path: desktop/src-tauri/target/release/bundle/nsis/*-setup.exe
+          if-no-files-found: error

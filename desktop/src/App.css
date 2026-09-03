@@ -1,0 +1,406 @@
+:root {
+  --bg: #0a0c10;
+  --panel: #12151b;
+  --panel-2: #171b23;
+  --line: #262c38;
+  --text: #e8ecf4;
+  --muted: #8a93a5;
+  --accent: #ffb454;
+  --ok: #5fd38c;
+  --err: #ff6b6b;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  /* 极淡工程网格，呼吸感而非噪音 */
+  background-image:
+    radial-gradient(1200px 500px at 50% -10%, rgba(255, 180, 84, 0.07), transparent 60%),
+    linear-gradient(rgba(255, 255, 255, 0.022) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.022) 1px, transparent 1px);
+  background-size: auto, 34px 34px, 34px 34px;
+}
+
+::selection {
+  background: rgba(255, 180, 84, 0.35);
+}
+
+.app {
+  max-width: 780px;
+  margin: 0 auto;
+  padding: 56px 28px 48px;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+/* —— 标题区 —— */
+.title {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 30px;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  color: var(--text);
+  animation: rise 0.5s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+
+.title::after {
+  content: "_";
+  color: var(--accent);
+  animation: blink 1.2s steps(1) infinite;
+}
+
+.hint {
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.7;
+  max-width: 46em;
+  animation: rise 0.5s 0.06s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+
+/* —— 输入区 —— */
+.field {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 0 14px;
+  transition:
+    border-color 0.18s,
+    box-shadow 0.18s;
+  animation: rise 0.5s 0.1s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+
+.field:focus-within {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(255, 180, 84, 0.12);
+}
+
+.field-lead {
+  color: var(--accent);
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 16px;
+  user-select: none;
+}
+
+.session-input {
+  flex: 1;
+  padding: 13px 0;
+  font-size: 15px;
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  color: var(--text);
+  background: transparent;
+  border: none;
+  outline: none;
+}
+
+.session-input::placeholder {
+  color: var(--muted);
+}
+
+/* —— 路径识别行 —— */
+.detect {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 12.5px;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 18px;
+  animation: rise 0.3s ease both;
+}
+
+.detect.detecting::before {
+  content: "";
+  width: 12px;
+  height: 12px;
+  border: 2px solid var(--line);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+.detect.ok {
+  color: var(--ok);
+}
+
+.detect.err {
+  color: var(--err);
+}
+
+/* —— YOLO 开关 —— */
+.yolo-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13.5px;
+  color: var(--text);
+  cursor: pointer;
+  user-select: none;
+  animation: rise 0.5s 0.14s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+
+.yolo-row input {
+  display: none;
+}
+
+.yolo-switch {
+  width: 38px;
+  height: 21px;
+  border-radius: 999px;
+  background: var(--line);
+  position: relative;
+  transition: background 0.18s;
+  flex-shrink: 0;
+}
+
+.yolo-switch::after {
+  content: "";
+  position: absolute;
+  top: 2.5px;
+  left: 3px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #c7cdd8;
+  transition:
+    transform 0.18s,
+    background 0.18s;
+}
+
+.yolo-row input:checked + .yolo-switch {
+  background: rgba(255, 180, 84, 0.85);
+}
+
+.yolo-row input:checked + .yolo-switch::after {
+  transform: translateX(16px);
+  background: #14100a;
+}
+
+.yolo-label {
+  font-weight: 600;
+}
+
+.yolo-note {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+/* —— Agent 启动卡片 —— */
+.agent-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(215px, 1fr));
+  gap: 13px;
+}
+
+.agent-card {
+  /* 每张卡片由自身品牌色驱动 */
+  --brand: #8a93a5;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: stretch;
+  text-align: left;
+  padding: 15px 15px 13px;
+  background:
+    linear-gradient(180deg, #1f2838, #161c29);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  color: var(--text);
+  cursor: pointer;
+  overflow: hidden;
+  transition:
+    transform 0.16s ease,
+    border-color 0.16s ease,
+    box-shadow 0.16s ease;
+  animation: rise 0.45s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+
+.agent-card:nth-child(1) { animation-delay: 0.05s; }
+.agent-card:nth-child(2) { animation-delay: 0.09s; }
+.agent-card:nth-child(3) { animation-delay: 0.13s; }
+.agent-card:nth-child(4) { animation-delay: 0.17s; }
+.agent-card:nth-child(5) { animation-delay: 0.21s; }
+.agent-card:nth-child(6) { animation-delay: 0.25s; }
+
+/* 顶部品牌色光带 */
+.agent-card::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 2.5px;
+  background: linear-gradient(90deg, transparent, var(--brand), transparent);
+  opacity: 0.65;
+}
+
+.agent-card:hover:not(:disabled) {
+  transform: translateY(-3px);
+  border-color: color-mix(in srgb, var(--brand) 65%, var(--line));
+  box-shadow:
+    0 12px 32px -14px rgba(0, 0, 0, 0.7),
+    0 0 22px -10px color-mix(in srgb, var(--brand) 55%, transparent);
+}
+
+.agent-card:active:not(:disabled) {
+  transform: translateY(-1px);
+}
+
+.agent-card:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+  animation-delay: 0s;
+}
+
+.agent-card.done {
+  border-color: var(--ok);
+}
+
+.agent-card.done::before {
+  background: linear-gradient(90deg, transparent, var(--ok), transparent);
+}
+
+.agent-card.yolo {
+  border-color: rgba(255, 180, 84, 0.6);
+}
+
+.agent-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.agent-logo {
+  width: 34px;
+  height: 34px;
+  padding: 7px;
+  flex: none;
+  border-radius: 9px;
+  display: grid;
+  place-items: center;
+  color: #f2f5fa;
+  background: color-mix(in srgb, var(--brand) 14%, transparent);
+  border: 1px solid color-mix(in srgb, var(--brand) 32%, transparent);
+}
+
+.agent-name {
+  font-size: 15px;
+  font-weight: 650;
+  letter-spacing: -0.01em;
+}
+
+.yolo-badge {
+  margin-left: auto;
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: #14100a;
+  background: var(--accent);
+  border-radius: 999px;
+  padding: 2px 7px;
+  animation: pop 0.25s ease both;
+  text-transform: uppercase;
+}
+
+.agent-action {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--muted);
+}
+
+.agent-card:not(:disabled):hover .agent-action {
+  color: #cdd6e3;
+}
+
+.agent-card.done .agent-action {
+  color: var(--ok);
+}
+
+/* 非属主卡：可点击但语义是「转入新会话」，虚线边框区分，hover 时提示色 */
+.agent-card.foreign {
+  border-style: dashed;
+  border-color: color-mix(in srgb, var(--brand) 45%, transparent);
+}
+.agent-card.foreign:not(:disabled):hover {
+  border-color: var(--brand);
+}
+.agent-card.foreign .agent-action {
+  color: color-mix(in srgb, var(--brand) 75%, var(--muted));
+}
+.agent-card.busy {
+  pointer-events: none;
+  opacity: 0.6;
+}
+.agent-card.busy .agent-action {
+  color: var(--accent);
+}
+
+/* 品牌色（与 agent 官方视觉一致） */
+.agent-card.claude { --brand: #ffa06b; }
+.agent-card.codex { --brand: #ffabc4; }
+.agent-card.kimi { --brand: #82c4ff; }
+.agent-card.opencode { --brand: #7ce8ac; }
+.agent-card.grok { --brand: #ffd75a; }
+.agent-card.pi { --brand: #d7b6ff; }
+
+/* —— 动效 —— */
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes pop {
+  from {
+    transform: scale(0.6);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}

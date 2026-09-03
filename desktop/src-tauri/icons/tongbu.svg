@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300">
+  <rect x="18" y="18" width="264" height="264" rx="58" fill="#0d1117"/>
+  <rect x="18" y="18" width="264" height="264" rx="58" fill="none" stroke="#ffffff" stroke-opacity="0.12" stroke-width="3"/>
+  <!-- 双环互锁：橙↔白，象征两侧会话同步/交接 -->
+  <g fill="none" stroke-width="30" stroke-linecap="round">
+    <circle cx="112" cy="150" r="64" stroke="#ffb454"/>
+    <circle cx="188" cy="150" r="64" stroke="#f2f5fa"/>
+  </g>
+  <circle cx="150" cy="150" r="11" fill="#f2f5fa" opacity="0.85"/>
+</svg>
