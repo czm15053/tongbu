@@ -7,12 +7,30 @@ use std::fs;
 use std::path::PathBuf;
 use std::process::{Command, Stdio};
 use std::sync::OnceLock;
+use tauri::Manager;
+
+/// CLI 运行时根目录（含 src/cli.ts 与 node_modules/tsx）。
+/// 开发态 = 仓库根（CARGO_MANIFEST_DIR/../..）；打包态 = 应用 Resources/tongbu-core。
+static CORE_ROOT: OnceLock<PathBuf> = OnceLock::new();
+
+fn init_core_root(app: &tauri::App) {
+    let dev = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../..");
+    let root = if dev.join("src/cli.ts").exists() {
+        dev
+    } else {
+        app.path()
+            .resource_dir()
+            .expect("resource_dir 不可用")
+            .join("tongbu-core")
+    };
+    let _ = CORE_ROOT.set(root);
+}
 
 fn repo_root() -> Result<PathBuf, String> {
-    PathBuf::from(env!("CARGO_MANIFEST_DIR"))
-        .join("../..")
-        .canonicalize()
-        .map_err(|e| format!("定位仓库根失败: {e}"))
+    CORE_ROOT
+        .get()
+        .cloned()
+        .ok_or_else(|| "核心目录未初始化".to_string())
 }
 
 /// node 是否已在 PATH 中可直接执行（Windows 下 OS 会自行解析 node.exe 的位置）
@@ -159,6 +177,10 @@ async fn open_in(source_id: String, provider_id: String) -> Result<Value, String
 pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_clipboard_manager::init())
+        .setup(|app| {
+            init_core_root(app);
+            Ok(())
+        })
         .invoke_handler(tauri::generate_handler![resolve_cwd, open_in])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

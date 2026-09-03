@@ -1,6 +1,6 @@
 {
   "name": "tongbu",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": true,
   "type": "module",
   "description": "跨 CLI agent 会话接力工具（桌面 GUI）",
