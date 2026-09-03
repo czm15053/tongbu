@@ -5,6 +5,9 @@ on:
     tags: ["v*"]
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   build:
     strategy:
@@ -62,12 +65,11 @@ jobs:
           npm ci
           npm run build
 
-      # tag 推送时 tauri-action 自动建 draft release 并把安装包传上去
+      # 只打包;release 由最后单独一个 job 统一建,避免矩阵并发创建互相冲突
       - name: 打包
         uses: tauri-apps/tauri-action@v0
         with:
           projectPath: desktop
-          tagName: ${{ github.ref_name }}
           args: --bundles ${{ matrix.bundles }} ${{ matrix.rust-target && format('--target {0}', matrix.rust-target) || '' }}
 
       - name: 上传安装包
@@ -80,3 +82,23 @@ jobs:
             desktop/src-tauri/target/release/bundle/nsis/*-setup.exe
             desktop/src-tauri/target/release/bundle/deb/*.deb
           if-no-files-found: error
+
+  release:
+    if: startsWith(github.ref, 'refs/tags/')
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: dist
+          merge-multiple: true
+
+      - name: 创建 release 并上传安装包
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          shopt -s nullglob
+          files=(dist/*.dmg dist/*.exe dist/*.deb)
+          [ ${#files[@]} -gt 0 ] || { echo "没有安装包可上传"; exit 1; }
+          gh release create "$GITHUB_REF_NAME" --title "tongbu $GITHUB_REF_NAME" --generate-notes "${files[@]}" \
+            || gh release upload "$GITHUB_REF_NAME" "${files[@]}" --clobber
