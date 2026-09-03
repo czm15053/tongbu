@@ -70,3 +70,7 @@ cd desktop && npx tauri build   # 打包当前平台安装包
 npm test               # 单元测试
 npm run typecheck      # 类型检查
 ```
+
+## 友情链接
+
+- [LINUX DO](https://linux.do) — 新的理想型社区

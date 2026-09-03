@@ -70,3 +70,7 @@ cd desktop && npx tauri build   # build the installer for the current platform
 npm test               # unit tests
 npm run typecheck      # typecheck
 ```
+
+## Links
+
+- [LINUX DO](https://linux.do) — a friendly tech community
