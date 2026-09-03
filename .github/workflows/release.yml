@@ -1,0 +1,81 @@
+name: release
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # mac arm / x86 都在 macos-latest(arm)上出,x86 走交叉编译,不依赖将被回收的 Intel runner
+          - os: macos-latest
+            rust-target: aarch64-apple-darwin
+            bundles: dmg
+            artifact: tongbu-macos-arm64
+          - os: macos-latest
+            rust-target: x86_64-apple-darwin
+            bundles: dmg
+            artifact: tongbu-macos-x64
+          - os: windows-latest
+            bundles: nsis
+            artifact: tongbu-windows-x64
+          - os: ubuntu-latest
+            bundles: deb
+            artifact: tongbu-linux-amd64
+    runs-on: ${{ matrix.os }}
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.rust-target || '' }}
+
+      # Tauri v2 在 Ubuntu 上的运行时/打包依赖
+      - name: 系统依赖
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libwebkit2gtk-4.1-dev \
+            build-essential curl wget file \
+            libxdo-dev libssl-dev \
+            libayatana-appindicator3-dev \
+            librsvg2-dev
+
+      # 仓库根依赖（app 运行期 resolve_cwd 要走 src/cli.ts + node_modules/tsx）
+      - name: 根依赖
+        run: npm ci
+
+      - name: 桌面前端构建
+        working-directory: desktop
+        run: |
+          npm ci
+          npm run build
+
+      # tag 推送时 tauri-action 自动建 draft release 并把安装包传上去
+      - name: 打包
+        uses: tauri-apps/tauri-action@v0
+        with:
+          projectPath: desktop
+          args: --bundles ${{ matrix.bundles }} ${{ matrix.rust-target && format('--target {0}', matrix.rust-target) || '' }}
+
+      - name: 上传安装包
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.artifact }}
+          path: |
+            desktop/src-tauri/target/${{ matrix.rust-target }}/release/bundle/dmg/*.dmg
+            desktop/src-tauri/target/release/bundle/dmg/*.dmg
+            desktop/src-tauri/target/release/bundle/nsis/*-setup.exe
+            desktop/src-tauri/target/release/bundle/deb/*.deb
+          if-no-files-found: error
